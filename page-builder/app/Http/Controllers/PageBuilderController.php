@@ -32,6 +32,15 @@ class PageBuilderController extends Controller
     }
 
     /**
+     * API: Get all pages
+     */
+    public function indexApi()
+    {
+        $pages = Page::orderBy('updated_at', 'desc')->get();
+        return response()->json($pages);
+    }
+
+    /**
      * API: Get page data
      */
     public function show($id)
@@ -180,11 +189,22 @@ class PageBuilderController extends Controller
     }
 
     /**
-     * Sayfa sil
+     * Sayfa sil (API & Web)
      */
-    public function destroy(Page $page)
+    public function destroy(Request $request, $id)
     {
+        $page = Page::findOrFail($id);
         $page->delete();
+
+        // API request - return JSON
+        if ($request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Page deleted successfully',
+            ]);
+        }
+
+        // Web request - redirect
         return redirect()->route('builder.index')
             ->with('success', 'Sayfa silindi!');
     }

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 // Page Builder API Routes
 Route::prefix('builder')->group(function () {
+    Route::get('/pages', [PageBuilderController::class, 'indexApi']);
     Route::get('/pages/{id}', [PageBuilderController::class, 'show']);
     Route::post('/pages', [PageBuilderController::class, 'store']);
     Route::put('/pages/{id}', [PageBuilderController::class, 'update']);
