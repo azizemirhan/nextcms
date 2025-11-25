@@ -42,8 +42,13 @@
       </template>
 
       <!-- Render content for text-based widgets -->
-      <template v-else-if="['heading', 'text', 'button'].includes(element.type)">
+      <template v-else-if="['heading', 'text'].includes(element.type)">
         <div v-html="element.content"></div>
+      </template>
+
+      <!-- Render button content (directly, no wrapper) -->
+      <template v-else-if="element.type === 'button'">
+        {{ element.content }}
       </template>
     </component>
 
@@ -139,6 +144,13 @@ const computedStyle = computed(() => {
   if (settings.borderWidth) style.borderWidth = settings.borderWidth;
   if (settings.borderColor) style.borderColor = settings.borderColor;
   if (settings.borderStyle) style.borderStyle = settings.borderStyle;
+
+  // Button specific styles
+  if (props.element.type === 'button') {
+    style.display = 'inline-block';
+    style.textDecoration = 'none';
+    style.cursor = 'pointer';
+  }
 
   return style;
 });
