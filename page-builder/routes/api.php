@@ -9,4 +9,9 @@ Route::prefix('builder')->group(function () {
     Route::post('/pages', [PageBuilderController::class, 'store']);
     Route::put('/pages/{id}', [PageBuilderController::class, 'update']);
     Route::delete('/pages/{id}', [PageBuilderController::class, 'destroy']);
+
+    // Global Settings
+    Route::get('/global-settings', [PageBuilderController::class, 'getGlobalSettings']);
+    Route::put('/global-settings', [PageBuilderController::class, 'updateGlobalSettings']);
+    Route::get('/google-fonts', [PageBuilderController::class, 'getGoogleFonts']);
 });

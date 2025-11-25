@@ -158,6 +158,20 @@
                 <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Typography</h3>
 
                 <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Font Family</label>
+                  <select
+                    v-model="localSettings.fontFamily"
+                    @change="updateLocalSetting('fontFamily', $event.target.value)"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="">Default</option>
+                    <option v-for="font in globalSettingsStore.selectedFonts" :key="font" :value="font">
+                      {{ font }}
+                    </option>
+                  </select>
+                </div>
+
+                <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
                   <input
                     v-model="localSettings.fontSize"
@@ -209,34 +223,22 @@
                   </div>
                 </div>
 
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
-                  <input
-                    v-model="localSettings.color"
-                    @input="updateLocalSetting('color', $event.target.value)"
-                    type="color"
-                    class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
-                  />
-                </div>
+                <ColorPicker
+                  :model-value="localSettings.color"
+                  @update:model-value="updateLocalSetting('color', $event)"
+                  label="Text Color"
+                  :supports-alpha="true"
+                />
               </div>
 
               <div class="border-t border-gray-200 pt-4"></div>
             </template>
 
             <!-- Background & Colors -->
-            <div class="space-y-3">
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Background & Colors</h3>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
-                <input
-                  v-model="localSettings.backgroundColor"
-                  @input="updateLocalSetting('backgroundColor', $event.target.value)"
-                  type="color"
-                  class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
-                />
-              </div>
-            </div>
+            <BackgroundControls
+              :settings="localSettings"
+              @update="handleSettingsUpdate"
+            />
 
             <div class="border-t border-gray-200 pt-4"></div>
 
@@ -266,15 +268,11 @@
                 />
               </div>
 
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Border Color</label>
-                <input
-                  v-model="localSettings.borderColor"
-                  @input="updateLocalSetting('borderColor', $event.target.value)"
-                  type="color"
-                  class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
-                />
-              </div>
+              <ColorPicker
+                :model-value="localSettings.borderColor"
+                @update:model-value="updateLocalSetting('borderColor', $event)"
+                label="Border Color"
+              />
             </div>
           </template>
 
@@ -353,13 +351,17 @@
 import { ref, computed, watch } from 'vue';
 import { usePageStore } from '../../stores/pageStore';
 import { useUIStore } from '../../stores/uiStore';
+import { useGlobalSettingsStore } from '../../stores/globalSettingsStore';
 import SpacingControl from '../Controls/SpacingControl.vue';
 import DimensionControl from '../Controls/DimensionControl.vue';
 import FlexboxControls from '../Controls/FlexboxControls.vue';
 import PositionControl from '../Controls/PositionControl.vue';
+import ColorPicker from '../Controls/ColorPicker.vue';
+import BackgroundControls from '../Controls/BackgroundControls.vue';
 
 const pageStore = usePageStore();
 const uiStore = useUIStore();
+const globalSettingsStore = useGlobalSettingsStore();
 
 const activeTab = ref('layout');
 const localSettings = ref({});
