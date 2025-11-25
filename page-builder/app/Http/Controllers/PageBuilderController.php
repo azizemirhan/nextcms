@@ -23,6 +23,64 @@ class PageBuilderController extends Controller
     }
 
     /**
+     * Vue Builder App
+     */
+    public function app()
+    {
+        return view('builder.app');
+    }
+
+    /**
+     * API: Get page data
+     */
+    public function show($id)
+    {
+        $page = Page::findOrFail($id);
+        return response()->json($page);
+    }
+
+    /**
+     * API: Create new page
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:pages,slug',
+            'layout_data' => 'nullable|array',
+            'status' => 'nullable|in:draft,published',
+        ]);
+
+        $page = Page::create([
+            'title' => $validated['title'],
+            'slug' => $validated['slug'] ?? Str::slug($validated['title']) . '-' . Str::random(6),
+            'layout_data' => $validated['layout_data'] ?? $this->builderService->getDefaultLayout(),
+            'status' => $validated['status'] ?? 'draft',
+        ]);
+
+        return response()->json($page, 201);
+    }
+
+    /**
+     * API: Update page
+     */
+    public function update(Request $request, $id)
+    {
+        $page = Page::findOrFail($id);
+
+        $validated = $request->validate([
+            'title' => 'nullable|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:pages,slug,' . $id,
+            'layout_data' => 'nullable|array',
+            'status' => 'nullable|in:draft,published',
+        ]);
+
+        $page->update(array_filter($validated));
+
+        return response()->json($page);
+    }
+
+    /**
      * Yeni sayfa oluştur
      */
     public function create()
