@@ -10,6 +10,7 @@ Route::get('/', function () {
 // Page Builder Routes
 Route::prefix('builder')->name('builder.')->group(function () {
     Route::get('/', [PageBuilderController::class, 'index'])->name('index');
+    Route::get('/app', [PageBuilderController::class, 'app'])->name('app');
     Route::post('/create', [PageBuilderController::class, 'create'])->name('create');
     Route::get('/editor/{page}', [PageBuilderController::class, 'editor'])->name('editor');
     Route::post('/save/{page}', [PageBuilderController::class, 'save'])->name('save');
